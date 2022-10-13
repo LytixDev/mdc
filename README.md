@@ -8,7 +8,7 @@ Include the header file into your C project:
 #include "mdc.h"
 ```
 
-Then you will need to initialize, and later destroy mdc by doing:
+Then you will need to initialize, and later destroy, mdc by doing:
 ```c
 int main()
 {
