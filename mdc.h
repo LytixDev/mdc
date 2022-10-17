@@ -26,6 +26,8 @@
 
 /* types */
 typedef void * (*malloc_perchance) (size_t);
+typedef void * (*realloc_perchance) (void *, size_t);
+typedef void * (*calloc_perchance) (size_t, size_t);
 typedef void (*free_perchance) (void *);
 
 /* functions */
@@ -55,7 +57,7 @@ void mdc_debug();
 
 #ifndef NICC_HT_IMPLEMENTATION
 #define NICC_HT_IMPLEMENTATION
-/* we do not want the track allocations in the hashtable implementation */
+/* we do not want to track allocations in the hashtable implementation */
 #undef malloc
 #undef free
 #undef realloc
@@ -82,6 +84,8 @@ struct alloc_record {
  * */
 struct ht_t allocs;
 malloc_perchance sysmalloc;
+realloc_perchance sysrealloc;
+calloc_perchance syscalloc;
 free_perchance sysfree;
 
 /* functions */
@@ -107,6 +111,21 @@ void *mdc_malloc(size_t size, const char *file, const int line)
     return p;
 }
 
+void *mdc_realloc(void *ptr, size_t size, const char *file, const int line)
+{
+    void *p = sysrealloc(ptr, size);
+    remove_allocation(&p);
+    save_allocation(&p, size, file, line);
+    return p;
+}
+
+void *mdc_calloc(size_t nitems, size_t size, const char *file, const int line)
+{
+    void *p = syscalloc(nitems, size);
+    save_allocation(&p, size, file, line);
+    return p;
+}
+
 void mdc_free(void *ptr, const char *file, const int line)
 {
     remove_allocation(&ptr);
@@ -118,6 +137,8 @@ void mdc_init()
 {
     allocs = *ht_malloc(8);
     sysmalloc = dlsym(RTLD_NEXT, "malloc");
+    sysrealloc = dlsym(RTLD_NEXT, "realloc");
+    syscalloc = dlsym(RTLD_NEXT, "calloc");
     sysfree = dlsym(RTLD_NEXT, "free");
 
     /* panic */
