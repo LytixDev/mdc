@@ -2,6 +2,11 @@
 Aims to make catching memory leaks trivial.
 
 ### Setup
+Clone the repo recursively to get the submodule dependency:
+```sh
+git clone --recursive git@github.com:LytixDev/mdc.git
+```
+
 Include the header file into your C project:
 ```c
 #define MDC_IMPLEMENTATION /* defining the implemention once is sufficient */
