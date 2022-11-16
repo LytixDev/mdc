@@ -148,7 +148,7 @@ void mdc_init()
 
 void mdc_destroy()
 {
-    ht_free(&allocs, true);
+    ht_free(&allocs);
 }
 
 void mdc_debug()
