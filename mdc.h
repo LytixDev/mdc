@@ -132,7 +132,6 @@ void mdc_free(void *ptr, const char *file, const int line)
     sysfree(ptr);
 }
 
-
 void mdc_init()
 {
     allocs = *ht_malloc(8);
